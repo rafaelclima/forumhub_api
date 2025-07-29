@@ -1,107 +1,108 @@
-# 📚 Literalura API
+# 🧠 ForumHub API
 
-[![Java](https://img.shields.io/badge/Java-21-blue.svg)](https://www.oracle.com/java/)
-[![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.2-brightgreen.svg)](https://spring.io/projects/spring-boot)
-[![PostgreSQL](https://img.shields.io/badge/PostgreSQL-15-blue.svg)](https://www.postgresql.org/)
-[![License](https://img.shields.io/badge/license-MIT-lightgrey.svg)](LICENSE)
-[![Build](https://img.shields.io/badge/build-passing-brightgreen.svg)]()
+[![Java](https://img.shields.io/badge/Java-21-blue?logo=java)](https://www.oracle.com/java/)
+[![Spring Boot](https://img.shields.io/badge/Spring_Boot-3.2-green?logo=spring)](https://spring.io/projects/spring-boot)
+[![PostgreSQL](https://img.shields.io/badge/PostgreSQL-Dockerized-blue?logo=postgresql)](https://www.postgresql.org/)
+[![License](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
-> 🔐 API segura baseada em Spring Boot 3, JWT e PostgreSQL para gerenciamento de livros e autores da literatura mundial.
-
----
-
-## ✨ Sobre o projeto
-
-O **Literalura** é uma API RESTful criada como desafio final do curso de Spring Boot da [Alura](https://www.alura.com.br). O objetivo é permitir o cadastro e consulta de obras literárias, com foco em autores, idiomas e rankings baseados em dados reais da [Gutenberg Project](https://www.gutenberg.org/).
+🚀 Projeto desenvolvido como desafio final do curso **Spring Boot da Alura**.
 
 ---
 
-## 🚀 Tecnologias utilizadas
+## 📌 Sobre o Projeto
 
-- ✅ **Java 21**
-- ✅ **Spring Boot 3.2**
-- ✅ **Spring Data JPA**
-- ✅ **Spring Security com JWT**
-- ✅ **Bean Validation**
-- ✅ **PostgreSQL**
-- ✅ **Lombok**
-- ✅ **Maven**
+A **ForumHub API** é uma aplicação RESTful desenvolvida com Spring Boot que simula o backend de um fórum de discussões. Nela, é possível:
+
+- ✅ Cadastrar, listar, atualizar e remover tópicos.
+- 🔐 Autenticar usuários com JWT (JSON Web Tokens).
+- 🛡️ Proteger endpoints com Spring Security.
+- 💬 Associar tópicos a cursos e usuários.
 
 ---
 
-## 🔐 Segurança
+## 🧱 Tecnologias Utilizadas
 
-A autenticação e autorização da API são baseadas em **JWT (JSON Web Token)**, garantindo uma abordagem **stateless** para maior escalabilidade e segurança.
-
-Endpoints protegidos exigem um token válido no header da requisição:
-
-```http
-Authorization: Bearer seu_token_aqui
-```
-
----
-
-## 🛠️ Como rodar o projeto localmente
-
-1. ✅ Clone o repositório:
-   ```bash
-   git clone https://github.com/seu-usuario/literalura.git
-   cd literalura
-   ```
-
-2. ✅ Crie o banco de dados:
-   ```sql
-   CREATE DATABASE literalura;
-   ```
-
-3. ✅ Configure o `application.properties` ou `application.yml` com suas credenciais:
-   ```properties
-   spring.datasource.url=jdbc:postgresql://localhost:5432/literalura
-   spring.datasource.username=seu_usuario
-   spring.datasource.password=sua_senha
-   ```
-
-4. ✅ Rode o projeto:
-   ```bash
-   ./mvnw spring-boot:run
-   ```
+- Java 21
+- Spring Boot 3.2+
+- Spring Security
+- Spring Data JPA
+- PostgreSQL (via Docker)
+- JWT (com `com.auth0:java-jwt`)
+- Lombok
+- Bean Validation
 
 ---
 
-## 📬 Endpoints principais
+## 🐘 Banco de Dados
 
-| Método | Endpoint            | Descrição                      |
-|--------|---------------------|--------------------------------|
-| POST   | `/login`            | Autenticação com usuário/senha |
-| POST   | `/livros`           | Cadastra novo livro            |
-| GET    | `/livros`           | Lista todos os livros          |
-| GET    | `/autores`          | Lista todos os autores         |
-| GET    | `/livros/{id}`      | Consulta livro por ID          |
-| DELETE | `/livros/{id}`      | Remove um livro                |
+O banco de dados PostgreSQL está sendo executado em um container Docker usando a imagem oficial da Bitnami.
 
-> ℹ️ A documentação completa da API (Swagger) estará disponível em breve.
-
----
-
-## 🧪 Testes
-
-Execute os testes com:
+### 🔧 Comando para subir o container:
 
 ```bash
-./mvnw test
+docker run -d \
+  --name pg-forumhub \
+  -e POSTGRESQL_USERNAME=admin \
+  -e POSTGRESQL_PASSWORD=admin \
+  -e POSTGRESQL_DATABASE=forumhub \
+  -p 5432:5432 \
+  bitnami/postgresql:latest
+```
+
+### 🔗 Configuração no `application-prod.properties`:
+
+```properties
+spring.datasource.url=jdbc:postgresql://localhost:5432/forumhub
+spring.datasource.username=admin
+spring.datasource.password=admin
+spring.jpa.hibernate.ddl-auto=validate
+api.security.token.secret=${JWT_SECRET}
 ```
 
 ---
 
-## 🧑‍💻 Autor
+## 📂 Como Executar o Projeto
 
-Desenvolvido com ❤️ por **Rafael Lima**
+1. Clone o repositório:
+```bash
+git clone https://github.com/seu-usuario/forumhub-api.git
+cd forumhub-api
+```
 
-- 🔗 [LinkedIn](https://www.linkedin.com/in/rafael-lima-dev)
-- 💻 [Portfólio](https://rafael.dev.br) (se houver)
+2. Crie um arquivo `.env` (ou configure suas variáveis de ambiente) com o valor do `JWT_SECRET`.
+
+3. Execute a aplicação:
+```bash
+./mvnw spring-boot:run
+```
 
 ---
 
-## 📝 Licença
+## ✅ Endpoints principais
+
+| Método | Rota                 | Descrição                    |
+|--------|----------------------|------------------------------|
+| POST   | `/auth/login`        | Autenticação de usuários     |
+| POST   | `/topicos`           | Cria novo tópico             |
+| GET    | `/topicos`           | Lista todos os tópicos       |
+| PUT    | `/topicos/{id}`      | Atualiza um tópico           |
+| DELETE | `/topicos/{id}`      | Remove um tópico             |
+
+> Endpoints protegidos requerem um token JWT válido no header:  
+> `Authorization: Bearer SEU_TOKEN_AQUI`
+
+---
+
+## 🤝 Contribuições
+
+Contribuições são bem-vindas! Sinta-se à vontade para abrir uma issue ou pull request.
+
+---
+
+## 📄 Licença
 
 Este projeto está sob a licença MIT. Veja o arquivo [LICENSE](LICENSE) para mais detalhes.
+
+---
+
+Feito com 💚 por Rafael Lima — [@seu-usuario](https://github.com/seu-usuario)

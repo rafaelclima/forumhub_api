@@ -1,7 +1,7 @@
 # 🧠 ForumHub API
 
 [![Java](https://img.shields.io/badge/Java-21-blue?logo=java)](https://www.oracle.com/java/)
-[![Spring Boot](https://img.shields.io/badge/Spring_Boot-3.2-green?logo=spring)](https://spring.io/projects/spring-boot)
+[![Spring Boot](https://img.shields.io/badge/Spring_Boot-3.5-green?logo=spring)](https://spring.io/projects/spring-boot)
 [![PostgreSQL](https://img.shields.io/badge/PostgreSQL-Dockerized-blue?logo=postgresql)](https://www.postgresql.org/)
 [![License](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
@@ -16,18 +16,18 @@ A **ForumHub API** é uma aplicação RESTful desenvolvida com Spring Boot que s
 - ✅ Cadastrar, listar, atualizar e remover tópicos.
 - 🔐 Autenticar usuários com JWT (JSON Web Tokens).
 - 🛡️ Proteger endpoints com Spring Security.
-- 💬 Associar tópicos a cursos e usuários.
+- 💬 Associar tópicos, respostas e usuários.
 
 ---
 
 ## 🧱 Tecnologias Utilizadas
 
 - Java 21
-- Spring Boot 3.2+
+- Spring Boot 3.5+
 - Spring Security
 - Spring Data JPA
 - PostgreSQL (via Docker)
-- JWT (com `com.auth0:java-jwt`)
+- JWT (com `oauth2-resource-server`)
 - Lombok
 - Bean Validation
 
@@ -55,7 +55,7 @@ docker run -d \
 spring.datasource.url=jdbc:postgresql://localhost:5432/forumhub
 spring.datasource.username=admin
 spring.datasource.password=admin
-spring.jpa.hibernate.ddl-auto=validate
+spring.jpa.hibernate.ddl-auto=update #em prod use validate
 api.security.token.secret=${JWT_SECRET}
 ```
 
@@ -80,13 +80,14 @@ cd forumhub-api
 
 ## ✅ Endpoints principais
 
-| Método | Rota                 | Descrição                    |
-|--------|----------------------|------------------------------|
-| POST   | `/auth/login`        | Autenticação de usuários     |
-| POST   | `/topicos`           | Cria novo tópico             |
-| GET    | `/topicos`           | Lista todos os tópicos       |
-| PUT    | `/topicos/{id}`      | Atualiza um tópico           |
-| DELETE | `/topicos/{id}`      | Remove um tópico             |
+| Método | Rota                 | Descrição                             |
+|--------|----------------------|---------------------------------------|
+| POST   | `/api/login`                  | Autenticação de usuários     |
+| POST   | `/api/topicos`                | Cria novo tópico             |
+| GET    | `/api/topicos`                | Lista todos os tópicos       |
+| PUT    | `/api/topicos/{id}`           | Atualiza um tópico           |
+| DELETE | `/api/topicos/{id}`           | Remove um tópico             |
+| POST   | `/api/topicos/{id}/respostas` | Remove um tópico             |
 
 > Endpoints protegidos requerem um token JWT válido no header:  
 > `Authorization: Bearer SEU_TOKEN_AQUI`
@@ -105,4 +106,4 @@ Este projeto está sob a licença MIT. Veja o arquivo [LICENSE](LICENSE) para ma
 
 ---
 
-Feito com 💚 por Rafael Lima — [@seu-usuario](https://github.com/seu-usuario)
+Feito com 💚 por Rafael Lima — [@rafaelclima](https://github.com/rafaelclima)

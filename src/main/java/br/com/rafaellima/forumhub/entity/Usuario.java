@@ -33,18 +33,14 @@ public class Usuario {
    @Column(name = "senha", nullable = false)
    String senha;
 
-   @ManyToMany(fetch = FetchType.EAGER)
-   @JoinTable(
-         name = "usuarios_roles",
-         joinColumns = @JoinColumn(name = "usuario_id", referencedColumnName = "id"),
-         inverseJoinColumns = @JoinColumn(name = "role_id", referencedColumnName = "id")
-   )
+   @ElementCollection(targetClass = Role.class, fetch = FetchType.EAGER)
+   @CollectionTable(name = "usuarios_roles", joinColumns = @JoinColumn(name = "usuario_id"))
+   @Enumerated(EnumType.STRING)
+   @Column(name = "role", nullable = false)
    private Set<Role> roles;
 
    public boolean isLoginValido(LoginRequestDTO loginRequest, PasswordEncoder passwordEncoder) {
-
       return passwordEncoder.matches(loginRequest.senha(), this.senha);
-
    }
 
    @Override

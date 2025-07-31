@@ -1,0 +1,23 @@
+meta {
+  name: Cadastrar Usuario
+  type: http
+  seq: 8
+}
+
+post {
+  url: http://localhost:8080/api/users
+  body: json
+  auth: inherit
+}
+
+body:json {
+  { 
+    "username": "Rafael Lima",
+    "email": "rcl_hc@hotmail.com",
+    "password": "123mudar"
+  }
+}
+
+settings {
+  encodeUrl: true
+}

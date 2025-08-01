@@ -7,6 +7,8 @@ import br.com.rafaellima.forumhub.entity.Usuario;
 import br.com.rafaellima.forumhub.repository.UserRepository;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -43,6 +45,19 @@ public class UserService {
                   .map(Role::getNome)
                   .collect(Collectors.toSet())
       );
+   }
+
+   public Page<UserResponseDTO> listUsers(Pageable pageable) {
+      return userRepository.findAll(pageable)
+            .map(user -> new UserResponseDTO(
+                  user.getId(),
+                  user.getNome(),
+                  user.getEmail(),
+                  user.getRoles()
+                        .stream()
+                        .map(Role::getNome)
+                        .collect(Collectors.toSet())
+            ));
    }
 
 }

@@ -26,7 +26,7 @@ public class AdminUserConfig {
 
             userRepository
                   .findByEmail("admin@forumhub.com").ifPresentOrElse(
-                user -> System.out.println("Usuário admin já existe."),
+                user -> System.out.println("Usuário admin já existe." + " ROlE: " + user.getRoles()),
                 () -> {
                     Usuario adminUser = new Usuario();
                     adminUser.setNome("Admin User");

@@ -1,95 +1,131 @@
 # 🧠 ForumHub API
 
 [![Java](https://img.shields.io/badge/Java-21-blue?logo=java)](https://www.oracle.com/java/)
-[![Spring Boot](https://img.shields.io/badge/Spring_Boot-3.5-green?logo=spring)](https://spring.io/projects/spring-boot)
-[![PostgreSQL](https://img.shields.io/badge/PostgreSQL-Dockerized-blue?logo=postgresql)](https://www.postgresql.org/)
+[![Spring Boot](https://img.shields.io/badge/Spring_Boot-3.x-green?logo=spring)](https://spring.io/projects/spring-boot)
+[![H2 Database](https://img.shields.io/badge/H2_Database-In--Memory-red?logo=h2)](https://www.h2database.com)
 [![License](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
-🚀 Projeto desenvolvido como desafio final do curso **Spring Boot da Alura**.
+🚀 Projeto desenvolvido como desafio final do curso **Spring Boot da Oracle One Alura**, construindo uma API RESTful completa para um fórum de discussões.
 
 ---
 
 ## 📌 Sobre o Projeto
 
-A **ForumHub API** é uma aplicação RESTful desenvolvida com Spring Boot que simula o backend de um fórum de discussões. Nela, é possível:
+O **ForumHub API** é uma aplicação RESTful que simula o backend de um fórum de discussões, permitindo que os usuários interajam com tópicos e respostas de forma segura.
 
-- ✅ Cadastrar, listar, atualizar e remover tópicos.
-- 🔐 Autenticar usuários com JWT (JSON Web Tokens).
-- 🛡️ Proteger endpoints com Spring Security.
-- 💬 Associar tópicos, respostas e usuários.
+- ✅ **Gerenciamento de Usuários:** Cadastro e autenticação de usuários com JWT.
+- ✅ **Gerenciamento de Tópicos:** CRUD completo (Criar, Listar, Detalhar, Atualizar, Deletar) para tópicos.
+- ✅ **Sistema de Respostas:** Permite adicionar respostas a tópicos e marcar uma delas como a solução.
+- 🔐 **Segurança Robusta:** Proteção de endpoints baseada em roles (USER, ADMIN) com Spring Security.
+- 🛡️ **Regras de Negócio:** Validações para prevenir tópicos duplicados e regras de autorização para garantir que apenas o autor do tópico ou um administrador possam modificá-lo.
 
 ---
 
 ## 🧱 Tecnologias Utilizadas
 
-- Java 21
-- Spring Boot 3.5+
-- Spring Security
-- Spring Data JPA
-- PostgreSQL (via Docker)
-- JWT (com `oauth2-resource-server`)
-- Lombok
-- Bean Validation
+- **Java 21**
+- **Spring Boot 3.x**
+- **Spring Security:** Para autenticação e autorização com JWT.
+- **Spring Data JPA:** Para persistência de dados.
+- **H2 Database:** Banco de dados em memória para ambiente de desenvolvimento.
+- **JWT (com `oauth2-resource-server`):** Para geração e validação de tokens de acesso usando chaves RSA.
+- **Lombok:** Para reduzir código boilerplate.
+- **Bean Validation:** Para validação de dados de entrada nos DTOs.
 
 ---
 
-## 🐘 Banco de Dados
+## ⚙️ Configuração Inicial
 
-O banco de dados PostgreSQL está sendo executado em um container Docker usando a imagem oficial da Bitnami.
+### Pré-requisitos
+- Java 21 (ou superior)
+- Maven
+- OpenSSL (para geração de chaves)
 
-### 🔧 Comando para subir o container:
+### 1. Geração das Chaves RSA
+A autenticação JWT utiliza um par de chaves RSA (pública e privada). Para gerar os arquivos necessários, execute os seguintes comandos na raiz do projeto:
 
 ```bash
-docker run -d \
-  --name pg-forumhub \
-  -e POSTGRESQL_USERNAME=admin \
-  -e POSTGRESQL_PASSWORD=admin \
-  -e POSTGRESQL_DATABASE=forumhub \
-  -p 5432:5432 \
-  bitnami/postgresql:latest
-```
+# 1. Crie o diretório para armazenar as chaves
+mkdir -p src/main/resources/keys
 
-### 🔗 Configuração no `application-prod.properties`:
+# 2. Gere a chave privada (private.pem)
+openssl genrsa -out src/main/resources/keys/private.pem 2048
+
+# 3. Extraia a chave pública a partir da privada (public.pem)
+openssl rsa -in src/main/resources/keys/private.pem -pubout -out src/main/resources/keys/public.pem
+```
+> **Importante:** O diretório `keys` já está incluído no `.gitignore` para garantir que as chaves privadas não sejam enviadas para o repositório.
+
+### 2. Banco de Dados (H2)
+O projeto utiliza o banco de dados em memória H2, que é configurado automaticamente pelo Spring Boot. Para visualizar o banco de dados enquanto a aplicação está rodando, habilite o console do H2 no arquivo `src/main/resources/application.properties`:
 
 ```properties
-spring.datasource.url=jdbc:postgresql://localhost:5432/forumhub
-spring.datasource.username=admin
-spring.datasource.password=admin
-spring.jpa.hibernate.ddl-auto=update #em prod use validate
-api.security.token.secret=${JWT_SECRET}
+# Habilita o console web do H2
+spring.h2.console.enabled=true
+# Define o caminho para acessar o console
+spring.h2.console.path=/h2-console
 ```
+Após iniciar a aplicação, você pode acessar o console em: `http://localhost:8080/h2-console`.
+- **JDBC URL:** `jdbc:h2:mem:testdb`
+- **User Name:** `sa`
+- **Password:** (deixe em branco)
 
 ---
 
 ## 📂 Como Executar o Projeto
 
-1. Clone o repositório:
-```bash
-git clone https://github.com/seu-usuario/forumhub-api.git
-cd forumhub-api
-```
+1.  **Clone o repositório:**
+    ```bash
+    git clone https://github.com/rafaelclima/forumhub_api.git
+    cd forumhub_api
+    ```
 
-2. Crie um arquivo `.env` (ou configure suas variáveis de ambiente) com o valor do `JWT_SECRET`.
+2.  **Execute os passos de Configuração Inicial** (gerar as chaves RSA).
 
-3. Execute a aplicação:
-```bash
-./mvnw spring-boot:run
-```
+3.  **Execute a aplicação:**
+    ```bash
+    ./mvnw spring-boot:run
+    ```
+A API estará disponível em `http://localhost:8080`.
 
 ---
 
-## ✅ Endpoints principais
+## 🧪 Testando a API com Bruno
 
-| Método | Rota                 | Descrição                             |
-|--------|----------------------|---------------------------------------|
-| POST   | `/api/login`                  | Autenticação de usuários     |
-| POST   | `/api/topicos`                | Cria novo tópico             |
-| GET    | `/api/topicos`                | Lista todos os tópicos       |
-| PUT    | `/api/topicos/{id}`           | Atualiza um tópico           |
-| DELETE | `/api/topicos/{id}`           | Remove um tópico             |
-| POST   | `/api/topicos/{id}/respostas` | Remove um tópico             |
+O diretório `ForumHub_API/` contém uma coleção de requisições prontas para serem usadas com o cliente de API **[Bruno](https://www.usebruno.com/)**.
 
-> Endpoints protegidos requerem um token JWT válido no header:  
+Para testar os endpoints:
+1.  Abra o Bruno e importe a coleção localizada na pasta `ForumHub_API`.
+2.  Execute a requisição **`Login`** primeiro. Ela irá autenticar e salvar o `accessToken` em uma variável de ambiente da coleção.
+3.  Execute as outras requisições. Elas usarão automaticamente o token salvo para autenticar nas rotas protegidas.
+
+---
+
+## Endpoints da API
+
+### Autenticação
+| Método | Rota         | Descrição                                   | Autenticação |
+| :----- | :----------- | :------------------------------------------ | :----------- |
+| `POST` | `/api/login` | Autentica um usuário e retorna um token JWT. | Pública      |
+
+### Usuários
+| Método | Rota          | Descrição                                   | Autenticação | Autorização |
+| :----- | :------------ | :------------------------------------------ | :----------- | :---------- |
+| `POST` | `/api/users`  | Cadastra um novo usuário com a role `USER`. | Pública      | -           |
+| `GET`  | `/api/users`  | Lista todos os usuários (paginado).         | Requerida    | `ADMIN`     |
+
+### Tópicos e Respostas
+| Método   | Rota                        | Descrição                               | Autenticação | Autorização                 |
+| :------- | :-------------------------- | :-------------------------------------- | :----------- | :-------------------------- |
+| `POST`   | `/api/topico`               | Cria um novo tópico.                    | Requerida    | `USER` ou `ADMIN`           |
+| `GET`    | `/api/topico`               | Lista todos os tópicos (paginado).      | Requerida    | `USER` ou `ADMIN`           |
+| `GET`    | `/api/topico/{id}`          | Detalha um tópico específico.           | Requerida    | `USER` ou `ADMIN`           |
+| `PUT`    | `/api/topico/{id}`          | Atualiza um tópico.                     | Requerida    | Dono do Tópico ou `ADMIN`   |
+| `DELETE` | `/api/topico/{id}`          | Exclui um tópico.                       | Requerida    | Dono do Tópico ou `ADMIN`   |
+| `POST`   | `/api/topico/{id}/resposta` | Adiciona uma resposta a um tópico.      | Requerida    | `USER` ou `ADMIN`           |
+| `PUT`    | `/api/topico/{id}/resposta/{idResposta}` | Marca/desmarca uma resposta como solução. | Requerida    | Dono do Tópico ou `ADMIN`   |
+
+> Endpoints com autenticação requerem um token JWT válido no header:
 > `Authorization: Bearer SEU_TOKEN_AQUI`
 
 ---
@@ -102,7 +138,7 @@ Contribuições são bem-vindas! Sinta-se à vontade para abrir uma issue ou pul
 
 ## 📄 Licença
 
-Este projeto está sob a licença MIT. Veja o arquivo [LICENSE](LICENSE) para mais detalhes.
+Este projeto está sob a licença MIT.
 
 ---
 

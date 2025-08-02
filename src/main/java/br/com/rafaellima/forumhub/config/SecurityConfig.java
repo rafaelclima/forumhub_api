@@ -8,7 +8,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
-import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -47,13 +46,12 @@ public class SecurityConfig {
             .authorizeHttpRequests(auth -> auth
                   .requestMatchers(HttpMethod.POST, "/api/login").permitAll()
                   .requestMatchers(HttpMethod.POST, "/api/users").permitAll()
-                  .anyRequest().authenticated()
-            )
-            .oauth2ResourceServer(oauth -> oauth.jwt(jwt -> jwt.jwtAuthenticationConverter(jwtAuthenticationConverter())))
+                  .anyRequest().authenticated())
+            .oauth2ResourceServer(oauth -> oauth.jwt(
+                  jwt -> jwt.jwtAuthenticationConverter(jwtAuthenticationConverter())))
             .exceptionHandling(ex -> ex
                   .authenticationEntryPoint(new BearerTokenAuthenticationEntryPoint())
-                  .accessDeniedHandler(new BearerTokenAccessDeniedHandler())
-            )
+                  .accessDeniedHandler(new BearerTokenAccessDeniedHandler()))
             .sessionManagement(session -> session
                   .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .build();
@@ -81,12 +79,15 @@ public class SecurityConfig {
 
    @Bean
    public JwtAuthenticationConverter jwtAuthenticationConverter() {
-      JwtGrantedAuthoritiesConverter grantedAuthoritiesConverter = new JwtGrantedAuthoritiesConverter();
+      JwtGrantedAuthoritiesConverter grantedAuthoritiesConverter =
+            new JwtGrantedAuthoritiesConverter();
       grantedAuthoritiesConverter.setAuthorityPrefix("ROLE_");
       grantedAuthoritiesConverter.setAuthoritiesClaimName("scope");
 
-      JwtAuthenticationConverter jwtAuthenticationConverter = new JwtAuthenticationConverter();
-      jwtAuthenticationConverter.setJwtGrantedAuthoritiesConverter(grantedAuthoritiesConverter);
+      JwtAuthenticationConverter jwtAuthenticationConverter =
+            new JwtAuthenticationConverter();
+      jwtAuthenticationConverter
+            .setJwtGrantedAuthoritiesConverter(grantedAuthoritiesConverter);
       return jwtAuthenticationConverter;
    }
 

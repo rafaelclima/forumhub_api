@@ -1,11 +1,11 @@
 meta {
-  name: Atualizar Topico
+  name: Marcar Resposta Solucionada
   type: http
-  seq: 4
+  seq: 10
 }
 
 put {
-  url: http://localhost:8080/api/topico/1
+  url: http://localhost:8080/api/topico/1/resposta/1
   body: json
   auth: bearer
 }
@@ -15,8 +15,8 @@ auth:bearer {
 }
 
 body:json {
-  { 
-    "titulo": "Teste"
+  {
+    "solucao": true
   }
 }
 

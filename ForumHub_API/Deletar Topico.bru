@@ -5,9 +5,13 @@ meta {
 }
 
 delete {
-  url: http://localhost:8080/api/topicos/1
+  url: http://localhost:8080/api/topico/5
   body: none
-  auth: inherit
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{accessToken}}
 }
 
 settings {

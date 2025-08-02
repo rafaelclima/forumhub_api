@@ -5,9 +5,19 @@ meta {
 }
 
 post {
-  url: http://localhost:8080/api/topicos/1/respostas
-  body: none
-  auth: inherit
+  url: http://localhost:8080/api/topico/1/resposta
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{accessToken}}
+}
+
+body:json {
+  {
+    "mensagem": "Exato, é isso mesmo! Elas simplificam o desenvolvimento"
+  }
 }
 
 settings {

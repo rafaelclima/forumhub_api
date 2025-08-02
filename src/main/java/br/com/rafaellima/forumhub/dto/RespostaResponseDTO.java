@@ -1,4 +1,12 @@
 package br.com.rafaellima.forumhub.dto;
 
-public record RespostaResponseDTO() {
+import java.time.LocalDateTime;
+
+public record RespostaResponseDTO(
+    Long id,
+    String mensagem,
+    String nomeUsuario,
+    LocalDateTime dataCriacao,
+    Boolean solucao) {
+
 }

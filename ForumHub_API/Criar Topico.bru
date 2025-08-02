@@ -5,9 +5,20 @@ meta {
 }
 
 post {
-  url: http://localhost:8080/api/topicos
-  body: none
-  auth: inherit
+  url: http://localhost:8080/api/topico
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{accessToken}}
+}
+
+body:json {
+  {
+    "titulo":"Pedido de solicitação",
+    "mensagem": "todos os pedidos para o email ..."
+  }
 }
 
 settings {

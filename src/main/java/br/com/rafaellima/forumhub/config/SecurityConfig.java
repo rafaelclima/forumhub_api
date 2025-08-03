@@ -33,62 +33,74 @@ import java.security.interfaces.RSAPublicKey;
 @EnableMethodSecurity
 public class SecurityConfig {
 
-   @Value("${jwt.public.key}")
-   private RSAPublicKey publicKey;
+	@Value("${jwt.public.key}")
+	private RSAPublicKey publicKey;
 
-   @Value("${jwt.private.key}")
-   private RSAPrivateKey privateKey;
+	@Value("${jwt.private.key}")
+	private RSAPrivateKey privateKey;
 
-   @Bean
-   public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-      return http
-            .csrf(AbstractHttpConfigurer::disable)
-            .authorizeHttpRequests(auth -> auth
-                  .requestMatchers(HttpMethod.POST, "/api/login").permitAll()
-                  .requestMatchers(HttpMethod.POST, "/api/users").permitAll()
-                  .anyRequest().authenticated())
-            .oauth2ResourceServer(oauth -> oauth.jwt(
-                  jwt -> jwt.jwtAuthenticationConverter(jwtAuthenticationConverter())))
-            .exceptionHandling(ex -> ex
-                  .authenticationEntryPoint(new BearerTokenAuthenticationEntryPoint())
-                  .accessDeniedHandler(new BearerTokenAccessDeniedHandler()))
-            .sessionManagement(session -> session
-                  .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-            .build();
+	@Bean
+	public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+		return http
+				.csrf(AbstractHttpConfigurer::disable)
+				.authorizeHttpRequests(auth -> auth
+						.requestMatchers(HttpMethod.POST, "/api/login")
+						.permitAll()
+						.requestMatchers(HttpMethod.POST, "/api/users")
+						.permitAll()
+						.requestMatchers("/v3/api-docs/**",
+								"/swagger-ui.html",
+								"/swagger-ui/**")
+						.permitAll()
 
-   }
+						.anyRequest().authenticated())
+				.oauth2ResourceServer(oauth -> oauth.jwt(
+						jwt -> jwt.jwtAuthenticationConverter(
+								jwtAuthenticationConverter())))
+				.exceptionHandling(ex -> ex
+						.authenticationEntryPoint(
+								new BearerTokenAuthenticationEntryPoint())
+						.accessDeniedHandler(
+								new BearerTokenAccessDeniedHandler()))
+				.sessionManagement(session -> session
+						.sessionCreationPolicy(
+								SessionCreationPolicy.STATELESS))
+				.build();
 
-   @Bean
-   public JwtEncoder jwtEncoder() {
-      JWK jwk = new RSAKey.Builder(this.publicKey).privateKey(this.privateKey).build();
-      var jwks = new ImmutableJWKSet<>(new JWKSet(jwk));
-      return new NimbusJwtEncoder(jwks);
+	}
 
-   }
+	@Bean
+	public JwtEncoder jwtEncoder() {
+		JWK jwk = new RSAKey.Builder(this.publicKey).privateKey(this.privateKey)
+				.build();
+		var jwks = new ImmutableJWKSet<>(new JWKSet(jwk));
+		return new NimbusJwtEncoder(jwks);
 
-   @Bean
-   public JwtDecoder jwtDecoder() {
-      return NimbusJwtDecoder
-            .withPublicKey(publicKey).build();
-   }
+	}
 
-   @Bean
-   public PasswordEncoder passwordEncoder() {
-      return new BCryptPasswordEncoder();
-   }
+	@Bean
+	public JwtDecoder jwtDecoder() {
+		return NimbusJwtDecoder
+				.withPublicKey(publicKey).build();
+	}
 
-   @Bean
-   public JwtAuthenticationConverter jwtAuthenticationConverter() {
-      JwtGrantedAuthoritiesConverter grantedAuthoritiesConverter =
-            new JwtGrantedAuthoritiesConverter();
-      grantedAuthoritiesConverter.setAuthorityPrefix("ROLE_");
-      grantedAuthoritiesConverter.setAuthoritiesClaimName("scope");
+	@Bean
+	public PasswordEncoder passwordEncoder() {
+		return new BCryptPasswordEncoder();
+	}
 
-      JwtAuthenticationConverter jwtAuthenticationConverter =
-            new JwtAuthenticationConverter();
-      jwtAuthenticationConverter
-            .setJwtGrantedAuthoritiesConverter(grantedAuthoritiesConverter);
-      return jwtAuthenticationConverter;
-   }
+	@Bean
+	public JwtAuthenticationConverter jwtAuthenticationConverter() {
+		JwtGrantedAuthoritiesConverter grantedAuthoritiesConverter =
+				new JwtGrantedAuthoritiesConverter();
+		grantedAuthoritiesConverter.setAuthorityPrefix("ROLE_");
+		grantedAuthoritiesConverter.setAuthoritiesClaimName("scope");
+
+		JwtAuthenticationConverter jwtAuthenticationConverter =
+				new JwtAuthenticationConverter();
+		jwtAuthenticationConverter
+				.setJwtGrantedAuthoritiesConverter(grantedAuthoritiesConverter);
+		return jwtAuthenticationConverter;
+	}
 
 }

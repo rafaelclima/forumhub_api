@@ -31,6 +31,7 @@ O **ForumHub API** é uma aplicação RESTful que simula o backend de um fórum 
 - **JWT (com `oauth2-resource-server`):** Para geração e validação de tokens de acesso usando chaves RSA.
 - **Lombok:** Para reduzir código boilerplate.
 - **Bean Validation:** Para validação de dados de entrada nos DTOs.
+- **SpringDoc OpenAPI:** Para geração de documentação interativa da API.
 
 ---
 
@@ -87,6 +88,22 @@ Após iniciar a aplicação, você pode acessar o console em: `http://localhost:
     ./mvnw spring-boot:run
     ```
 A API estará disponível em `http://localhost:8080`.
+
+---
+
+## 📖 Documentação da API (Swagger)
+
+Com a aplicação em execução, a documentação interativa da API, gerada pelo SpringDoc, pode ser acessada em:
+
+- **[http://localhost:8080/swagger-ui.html](http://localhost:8080/swagger-ui.html)**
+
+Nesta interface, você pode visualizar todos os endpoints, seus DTOs de requisição e resposta, e testá-los diretamente.
+
+#### Testando Endpoints Protegidos
+1.  Primeiro, use o endpoint `/api/login` para obter um token JWT.
+2.  Clique no botão **`Authorize`** no canto superior direito da página do Swagger.
+3.  Na janela que abrir, digite `Bearer ` seguido do seu token (ex: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...`) e clique em **`Authorize`**.
+4.  Agora você pode executar as requisições para os endpoints protegidos.
 
 ---
 
